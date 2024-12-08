@@ -10,6 +10,19 @@ constexpr unsigned short MAX_MONTH_VALUE = 12;
 constexpr unsigned short MIN_YEAR_VALUE = 1900;
 constexpr unsigned short MAX_YEAR_VALUE = 2100;
 
+constexpr unsigned short MAX_DATE_STR_SIZE = 50;
+
+bool validateDate(const unsigned short day, const unsigned short month, const unsigned short year)
+{
+	bool isMonthDayValid = false;
+
+	bool isDayValid = day >= MIN_DAY_VALUE && day <= MAX_DAY_VALUE;
+	bool isMonthValid = month >= MIN_MONTH_VALUE && month <= MAX_MONTH_VALUE;
+	bool isYearValid = year >= MIN_YEAR_VALUE && year <= MAX_YEAR_VALUE;
+
+	return isDayValid && isMonthValid && isYearValid;
+}
+
 int main()
 {
 	unsigned short day, month, year;
@@ -18,22 +31,31 @@ int main()
 	std::cin >> month;
 	std::cin >> year;
 
-	bool isDayValid = day >= MIN_DAY_VALUE && day <= MAX_DAY_VALUE;
-	bool isMonthValid = month >= MIN_MONTH_VALUE && month <= MAX_MONTH_VALUE;
-	bool isYearValid = year >= MIN_YEAR_VALUE && year <= MAX_YEAR_VALUE;
-
-	while (!isDayValid && !isMonthValid && !isYearValid)
+	while (!validateDate(day, month, year))
 	{
-		std::cout << "Make sure days are between " << MIN_DAY_VALUE << " and " << MAX_DAY_VALUE;
-		std::cout << "Make sure days are between " << MIN_DAY_VALUE << " and " << MAX_DAY_VALUE;
-		std::cout << "Make sure days are between " << MIN_DAY_VALUE << " and " << MAX_DAY_VALUE;
+		std::cout << "\nMake sure day is between " << MIN_DAY_VALUE << " and " << MAX_DAY_VALUE << "!\n";
+		std::cout << "Make sure month is between " << MIN_MONTH_VALUE << " and " << MAX_MONTH_VALUE << "!\n";
+		std::cout << "Make sure year is between " << MIN_YEAR_VALUE << " and " << MAX_YEAR_VALUE << "!\n";
+		
+		std::cin >> day;
+		std::cin >> month;
+		std::cin >> year;
 	}
 
 	struct tm date;
 
+	date.tm_year = year - 1900;
+	date.tm_mon = month - 1;
 	date.tm_mday = day;
-	date.tm_mon = month;
-	date.tm_year = year;
-
+	date.tm_wday = 0;
+	date.tm_isdst = -1;
 	
+	// Corrects possible input date errors
+	mktime(&date);
+
+	char dateStr[MAX_DATE_STR_SIZE];
+
+	strftime(dateStr, sizeof dateStr, "%A,%#d,%B,%Y", &date);
+		
+	std::cout << dateStr;
 }
