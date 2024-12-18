@@ -34,6 +34,6 @@ int main()
 	date.tm_mday = day;
 	date.tm_mon = month;
 	date.tm_year = year;
-
+	
 	
 }
